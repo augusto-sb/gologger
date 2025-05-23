@@ -14,4 +14,5 @@ func TestDebug(t *testing.T) {
 	Error("hola")
 	log.Println("utc")
 	fmt.Println(time.Now().Format(time.RFC3339))
+	fmt.Println(time.Now().UTC().Format(time.RFC3339))
 }

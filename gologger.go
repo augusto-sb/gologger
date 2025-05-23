@@ -15,10 +15,17 @@ const (
 
 func init() {
 
-	time.Local = time.UTC // utc
+	//time.Local = time.UTC // utc
 
 	var loggerColor string = os.Getenv("LOGGER_COLOR")
 	var loggerLevel string = os.Getenv("LOGGER_LEVEL")
+	var loggerTZ string = os.Getenv("LOGGER_TZ")
+
+	loc, err := time.LoadLocation(loggerTZ)
+	if err != nil {
+		panic("logger: invalid timezone")
+	}
+	log.Println(loc)
 
 	if loggerLevel != DebugLevel && loggerLevel != WarnLevel && loggerLevel != ErrorLevel {
 		loggerLevel = "info"
