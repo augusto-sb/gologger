@@ -1,7 +1,8 @@
 package gologger
 
 import (
-	"log"
+	"fmt"
+	//"log"
 	"os"
 	"time"
 )
@@ -13,19 +14,28 @@ const (
 	ErrorLevel string = "error"
 )
 
-func init() {
+var loc *time.Location
 
+func println(str string) {
+	//log.Println(str)
+	//ts := time.Now().In(loc).Format(time.RFC3339)
+	ts := time.Now().In(loc).Format(time.DateTime)
+	fmt.Println(ts + " " + str)
+}
+
+func init() {
+	var err error
 	//time.Local = time.UTC // utc
 
 	var loggerColor string = os.Getenv("LOGGER_COLOR")
 	var loggerLevel string = os.Getenv("LOGGER_LEVEL")
 	var loggerTZ string = os.Getenv("LOGGER_TZ")
 
-	loc, err := time.LoadLocation(loggerTZ)
+	loc, err = time.LoadLocation(loggerTZ)
 	if err != nil {
-		panic("logger: invalid timezone")
+		//panic("logger: invalid timezone")
+		loc = time.UTC
 	}
-	log.Println(loc)
 
 	if loggerLevel != DebugLevel && loggerLevel != WarnLevel && loggerLevel != ErrorLevel {
 		loggerLevel = "info"
@@ -34,30 +44,30 @@ func init() {
 	if loggerColor == "true" {
 		switch loggerLevel {
 		case DebugLevel:
-			Debug = func(str string) { log.Println("\033[34mDEBUG\033[0m " + str) }
+			Debug = func(str string) { println("\033[34mDEBUG\033[0m " + str) }
 			fallthrough
 		case InfoLevel:
-			Info = func(str string) { log.Println("\033[32mINFO\033[0m  " + str) }
+			Info = func(str string) { println("\033[32mINFO\033[0m  " + str) }
 			fallthrough
 		case WarnLevel:
-			Warn = func(str string) { log.Println("\033[33mWARN\033[0m  " + str) }
+			Warn = func(str string) { println("\033[33mWARN\033[0m  " + str) }
 			fallthrough
 		case ErrorLevel:
-			Error = func(str string) { log.Println("\033[31mERROR\033[0m " + str) }
+			Error = func(str string) { println("\033[31mERROR\033[0m " + str) }
 		}
 	} else {
 		switch loggerLevel {
 		case DebugLevel:
-			Debug = func(str string) { log.Println("DEBUG " + str) }
+			Debug = func(str string) { println("DEBUG " + str) }
 			fallthrough
 		case InfoLevel:
-			Info = func(str string) { log.Println("INFO  " + str) }
+			Info = func(str string) { println("INFO  " + str) }
 			fallthrough
 		case WarnLevel:
-			Warn = func(str string) { log.Println("WARN  " + str) }
+			Warn = func(str string) { println("WARN  " + str) }
 			fallthrough
 		case ErrorLevel:
-			Error = func(str string) { log.Println("ERROR " + str) }
+			Error = func(str string) { println("ERROR " + str) }
 		}
 	}
 }
